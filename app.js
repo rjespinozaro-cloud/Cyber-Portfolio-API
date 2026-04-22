@@ -9,11 +9,11 @@ async function start() {
         const response = await fetch(`https://api.github.com/repos/${GITHUB_DATA.user}/${GITHUB_DATA.repo}/contents/`);
         const items = await response.json();
 
-        if (!Array.isArray(items)) throw new Error("API Error");
+        if (!Array.isArray(items)) throw new Error("API Connection Failed");
 
         engine.innerHTML = ''; 
 
-        // Filtrar solo carpetas principales (01, 02...)
+        // Filtrar solo carpetas raíz (01, 02, 03, 04, 05)
         const folders = items
             .filter(item => item.type === 'dir' && /^\d/.test(item.name))
             .sort((a, b) => a.name.localeCompare(b.name));
@@ -27,19 +27,19 @@ async function start() {
                     <span>[ + ]</span>
                 </div>
                 <div class="content" id="box-${item.name}">
-                    <div class="loader" style="font-size:0.7rem;">Escaneando subtemas...</div>
+                    <div class="loader" style="font-size:0.7rem; padding:10px;">Escaneando subtemas en tiempo real...</div>
                 </div>
             `;
             engine.appendChild(catDiv);
             fetchFiles(item.name);
         }
     } catch (e) { 
-        engine.innerHTML = `<div style="color:red; text-align:center;">ERROR: No se pudo conectar con el repositorio.</div>`;
+        engine.innerHTML = `<div style="color:red; text-align:center; padding:20px;">ERROR: Acceso denegado o repositorio no encontrado.</div>`;
     }
 }
 
 async function fetchFiles(dirPath) {
-    const boxId = `box-${dirPath.split('/').pop()}`;
+    const boxId = `box-${dirPath}`;
     const box = document.getElementById(boxId);
     
     try {
@@ -48,11 +48,11 @@ async function fetchFiles(dirPath) {
         
         box.innerHTML = ''; 
 
-        // Limpiar archivos ocultos
+        // Ignorar el archivo de sistema .gitkeep
         const validItems = items.filter(i => i.name !== '.gitkeep');
 
         if (validItems.length === 0) {
-            box.innerHTML = '<p style="color:#444; font-size:0.75rem; padding:10px;">Sin registros en este nivel.</p>';
+            box.innerHTML = '<p style="color:#444; font-size:0.75rem; padding:15px;">Directorio listo para recibir evidencias.</p>';
             return;
         }
 
@@ -62,11 +62,11 @@ async function fetchFiles(dirPath) {
             row.target = "_blank";
 
             if (item.type === 'dir') {
-                // ES UNA SUB-CARPETA (SUBTEMA)
+                // SI ES SUB-CARPETA (SUBTEMA)
                 row.href = `https://github.com/${GITHUB_DATA.user}/${GITHUB_DATA.repo}/tree/main/${item.path}`;
-                row.innerHTML = `<span style="margin-right:12px">📁</span> <strong style="color:var(--cyan)">SUBTEMA:</strong> ${item.name.replace(/-/g, ' ')}`;
+                row.innerHTML = `<span style="margin-right:12px">📁</span> <strong style="color:var(--cyan)">SUBTEMA:</strong> ${item.name.toUpperCase().replace(/-/g, ' ')}`;
             } else {
-                // ES UN ARCHIVO
+                // SI ES ARCHIVO (REPORTE)
                 let url = item.html_url;
                 let icon = "📄";
                 
@@ -85,7 +85,9 @@ async function fetchFiles(dirPath) {
             }
             box.appendChild(row);
         });
-    } catch (e) { box.innerHTML = 'Error al leer sub-niveles.'; }
+    } catch (e) { 
+        box.innerHTML = '<div style="color:#666; font-size:0.7rem; padding:10px;">Error al indexar sub-niveles.</div>';
+    }
 }
 
 function toggleCat(el) {
