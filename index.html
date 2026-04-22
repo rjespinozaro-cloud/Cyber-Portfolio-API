@@ -13,29 +13,29 @@
         h1 { margin: 0; font-size: 2rem; letter-spacing: -1px; }
         .status-bar { color: var(--cyan); font-size: 0.9rem; margin-top: 10px; }
         
-        /* Acordeones */
         .category { background: var(--card); border: 1px solid var(--border); margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
         .category-header { padding: 22px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
         .category-header:hover { background: #1a1a1a; }
-        .category-header h2 { margin: 0; font-size: 1rem; color: var(--purple); }
+        .category-header h2 { margin: 0; font-size: 0.9rem; color: var(--purple); text-transform: uppercase; }
         
         .content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; background: #0c0c0c; }
         .content.active { max-height: 1200px; border-top: 1px solid var(--border); padding: 15px; }
 
-        .file-row { display: flex; align-items: center; padding: 14px; text-decoration: none; color: #aaa; font-size: 0.9rem; border-bottom: 1px solid #181818; }
+        .file-row { display: flex; align-items: center; padding: 14px; text-decoration: none; color: #aaa; font-size: 0.85rem; border-bottom: 1px solid #181818; }
         .file-row:hover { color: var(--cyan); background: #151515; padding-left: 25px; transition: 0.3s; }
-        .file-row i { margin-right: 12px; }
+        .loader { color: var(--cyan); text-align: center; padding: 20px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>PURPLE TEAM PORTFOLIO</h1>
-            <div class="status-bar">> Operativo | rjespinozaro-cloud</div>
+            <div class="status-bar">> Sistema Operativo | rjespinozaro-cloud</div>
         </header>
 
         <div id="portfolio-engine">
-            </div>
+            <div class="loader">Iniciando escaneo de directorios...</div>
+        </div>
     </div>
     <script src="app.js"></script>
 </body>
