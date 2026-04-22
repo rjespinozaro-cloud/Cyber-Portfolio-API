@@ -19,10 +19,31 @@
         .category-header h2 { margin: 0; font-size: 0.9rem; color: var(--purple); text-transform: uppercase; }
         
         .content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; background: #0c0c0c; }
-        .content.active { max-height: 1200px; border-top: 1px solid var(--border); padding: 15px; }
+        .content.active { max-height: 2000px; border-top: 1px solid var(--border); padding: 10px 0; }
 
-        .file-row { display: flex; align-items: center; padding: 14px; text-decoration: none; color: #aaa; font-size: 0.85rem; border-bottom: 1px solid #181818; }
-        .file-row:hover { color: var(--cyan); background: #151515; padding-left: 25px; transition: 0.3s; }
+        .file-row { 
+            display: flex; 
+            align-items: center; 
+            padding: 14px 25px; 
+            text-decoration: none; 
+            color: #aaa; 
+            font-size: 0.85rem; 
+            border-bottom: 1px solid #181818;
+            transition: 0.2s;
+        }
+        .file-row:hover { color: var(--cyan); background: #151515; padding-left: 35px; }
+        
+        /* Estilo para el badge de [EXPLORAR] */
+        .explore-badge {
+            color: var(--cyan);
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.75rem;
+            border: 1px solid var(--cyan);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
         .loader { color: var(--cyan); text-align: center; padding: 20px; font-size: 0.8rem; }
     </style>
 </head>
