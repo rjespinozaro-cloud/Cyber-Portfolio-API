@@ -2,20 +2,41 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Biblia Cyber - Portafolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Team | rjespinozaro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #00ff00; padding: 50px; }
-        h1 { border-bottom: 2px solid #00ff00; }
-        .card { background: #222; border: 1px solid #444; padding: 20px; border-radius: 10px; }
+        :root { --purple: #a333ff; --cyan: #00f2ff; --bg: #080808; --card: #111; --border: #222; }
+        body { background: var(--bg); color: #fff; font-family: 'Fira Code', monospace; padding: 40px 10px; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; }
+        header { border-left: 4px solid var(--purple); padding: 0 20px; margin-bottom: 60px; }
+        h1 { margin: 0; font-size: 2rem; letter-spacing: -1px; }
+        .status-bar { color: var(--cyan); font-size: 0.9rem; margin-top: 10px; }
+        
+        /* Acordeones */
+        .category { background: var(--card); border: 1px solid var(--border); margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
+        .category-header { padding: 22px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .category-header:hover { background: #1a1a1a; }
+        .category-header h2 { margin: 0; font-size: 1rem; color: var(--purple); }
+        
+        .content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; background: #0c0c0c; }
+        .content.active { max-height: 1200px; border-top: 1px solid var(--border); padding: 15px; }
+
+        .file-row { display: flex; align-items: center; padding: 14px; text-decoration: none; color: #aaa; font-size: 0.9rem; border-bottom: 1px solid #181818; }
+        .file-row:hover { color: var(--cyan); background: #151515; padding-left: 25px; transition: 0.3s; }
+        .file-row i { margin-right: 12px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🛡️ Mi Biblia de Ciberseguridad</h1>
-        <p>Bienvenido a mi portafolio profesional.</p>
-        <ul>
-            <li><a href="01-Infrastructure-Security/auditoria-router-zte.md" style="color: #00ff00;">Ver Auditoría ZTE</a></li>
-        </ul>
+    <div class="container">
+        <header>
+            <h1>PURPLE TEAM PORTFOLIO</h1>
+            <div class="status-bar">> Operativo | rjespinozaro-cloud</div>
+        </header>
+
+        <div id="portfolio-engine">
+            </div>
     </div>
+    <script src="app.js"></script>
 </body>
 </html>
