@@ -9,11 +9,11 @@ async function start() {
         const response = await fetch(`https://api.github.com/repos/${GITHUB_DATA.user}/${GITHUB_DATA.repo}/contents/`);
         const items = await response.json();
 
-        if (!Array.isArray(items)) throw new Error("No se pudo obtener la lista de archivos");
+        if (!Array.isArray(items)) throw new Error("API Error");
 
-        engine.innerHTML = ''; // Limpiar loader
+        engine.innerHTML = ''; 
 
-        // Filtrar y ordenar carpetas numéricas
+        // Filtrar solo carpetas principales (01, 02...)
         const folders = items
             .filter(item => item.type === 'dir' && /^\d/.test(item.name))
             .sort((a, b) => a.name.localeCompare(b.name));
@@ -27,55 +27,65 @@ async function start() {
                     <span>[ + ]</span>
                 </div>
                 <div class="content" id="box-${item.name}">
-                    <small style="color:#444; padding:10px; display:block;">Listando archivos de seguridad...</small>
+                    <div class="loader" style="font-size:0.7rem;">Escaneando subtemas...</div>
                 </div>
             `;
             engine.appendChild(catDiv);
             fetchFiles(item.name);
         }
     } catch (e) { 
-        engine.innerHTML = `<div style="color:red; text-align:center;">ERROR DE ENLACE: Verifique conexión con API.</div>`;
-        console.error(e);
+        engine.innerHTML = `<div style="color:red; text-align:center;">ERROR: No se pudo conectar con el repositorio.</div>`;
     }
 }
 
-async function fetchFiles(dir) {
-    const box = document.getElementById(`box-${dir}`);
+async function fetchFiles(dirPath) {
+    const boxId = `box-${dirPath.split('/').pop()}`;
+    const box = document.getElementById(boxId);
+    
     try {
-        const res = await fetch(`https://api.github.com/repos/${GITHUB_DATA.user}/${GITHUB_DATA.repo}/contents/${dir}`);
-        const files = await res.json();
+        const res = await fetch(`https://api.github.com/repos/${GITHUB_DATA.user}/${GITHUB_DATA.repo}/contents/${dirPath}`);
+        const items = await res.json();
         
-        box.innerHTML = ''; // Limpiar cargando
+        box.innerHTML = ''; 
 
-        const validFiles = files.filter(f => f.name !== '.gitkeep');
+        // Limpiar archivos ocultos
+        const validItems = items.filter(i => i.name !== '.gitkeep');
 
-        if (validFiles.length === 0) {
-            box.innerHTML = '<p style="color:#444; font-size:0.8rem; padding:10px;">Directorio vacío. Pendiente de auditoría.</p>';
+        if (validItems.length === 0) {
+            box.innerHTML = '<p style="color:#444; font-size:0.75rem; padding:10px;">Sin registros en este nivel.</p>';
             return;
         }
 
-        validFiles.forEach(f => {
-            let url = f.html_url;
-            let icon = "📄";
-            
-            if (f.name.match(/\.(docx|doc)$/i)) {
-                url = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(f.download_url)}`;
-                icon = "📘";
-            } else if (f.name.endsWith('.pdf')) {
-                icon = "📕";
-                url = f.download_url;
-            } else if (f.name.endsWith('.md')) {
-                icon = "📝";
-            }
-
+        validItems.forEach(item => {
             const row = document.createElement('a');
             row.className = 'file-row';
-            row.href = url;
             row.target = "_blank";
-            row.innerHTML = `<span style="margin-right:12px">${icon}</span> ${f.name}`;
+
+            if (item.type === 'dir') {
+                // ES UNA SUB-CARPETA (SUBTEMA)
+                row.href = `https://github.com/${GITHUB_DATA.user}/${GITHUB_DATA.repo}/tree/main/${item.path}`;
+                row.innerHTML = `<span style="margin-right:12px">📁</span> <strong style="color:var(--cyan)">SUBTEMA:</strong> ${item.name.replace(/-/g, ' ')}`;
+            } else {
+                // ES UN ARCHIVO
+                let url = item.html_url;
+                let icon = "📄";
+                
+                if (item.name.match(/\.(docx|doc)$/i)) {
+                    url = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(item.download_url)}`;
+                    icon = "📘";
+                } else if (item.name.endsWith('.pdf')) {
+                    icon = "📕";
+                    url = item.download_url;
+                } else if (item.name.endsWith('.md')) {
+                    icon = "📝";
+                }
+                
+                row.href = url;
+                row.innerHTML = `<span style="margin-right:12px">${icon}</span> ${item.name}`;
+            }
             box.appendChild(row);
         });
-    } catch (e) { box.innerHTML = 'Error al cargar.'; }
+    } catch (e) { box.innerHTML = 'Error al leer sub-niveles.'; }
 }
 
 function toggleCat(el) {
